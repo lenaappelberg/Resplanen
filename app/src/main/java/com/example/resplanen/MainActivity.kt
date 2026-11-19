@@ -19,7 +19,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
 import com.example.resplanen.ui.theme.ResplanenTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -61,10 +64,10 @@ fun Travelcards(){
     Card() { }
 }
 @Composable
-fun Inputelement(){
+fun Inputelement(viewmodel: ResplanenViewmodel=viewModel() ){
     Column() {
         Text(text = "Input a travel destination")
-        TextField(value = "", onValueChange = {}, enabled = false)
+        TextField(value = "", onValueChange = {viewmodel.onnewresa()}, enabled = false)
         Button(onClick = {}) { Text(text = "Add destination") }
     }
 }

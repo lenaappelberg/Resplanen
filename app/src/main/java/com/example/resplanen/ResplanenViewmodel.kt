@@ -14,8 +14,26 @@ data class Resplanen  (
 val reslist=listOf<Resplanen>(
 
 )
+data class Resplanenuistate(
+    val Objektresa: Resplanen,
+    val mutreslist: List<Resplanen>
+)
 class ResplanenViewmodel : ViewModel() {
-    private var _uistate by mutableStateOf(Resplanen(id=0))
+    private var _uistate by mutableStateOf(Resplanenuistate(Resplanen(id=0),reslist))
         private set
-
+    private var count=0
+    fun addresa(){
+        val nyresa=Resplanen(_uistate.Objektresa.Aktivitet,
+            _uistate.Objektresa.plats,
+            count,
+            _uistate.Objektresa.gjort)
+        count+=1
+        _uistate = _uistate.copy(
+            Objektresa = Resplanen(Aktivitet="",plats= "",id=0,),
+            mutreslist = _uistate.mutreslist + nyresa
+        )
+    }
+    fun onnewresa(aktivitet: String,plats: String,gjort: Boolean){
+        _uistate=_uistate.copy(Objektresa=Resplanen(aktivitet,plats,count,gjort))
+    }
 }
