@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     TopAppBar({ Title("hello") })
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Listofcards(
-                            listOf(Resplanen(id = 0))
+
                         )
                         Inputelement()
                     }
@@ -52,23 +52,30 @@ fun Title(text:String){
     Text(text)
 }
 @Composable
-fun Listofcards(resor:List<Resplanen>){
+fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
+    val resor=viewmodel.uistate.mutreslist
     LazyColumn() {
         items(resor,key={it.id}){res->
-           Travelcards()
+           Travelcards(res.Aktivitet,res.plats)
         }
     }
 }
 @Composable
-fun Travelcards(){
-    Card() { }
+fun Travelcards(aktivitet: String,plats:String){
+    Card() {
+        Text(text = aktivitet)
+        Text(text = plats)
+    }
 }
 @Composable
 fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
     val item=viewModel.uistate.aktivitet
+    val plats=viewModel.uistate.plats
     Column() {
-        Text(text = "Input a travel destination")
-        TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)}, enabled = false)
+        Text(text = "Input an activitet")
+        TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)})
+        Text(text = "Input a destination")
+        TextField(value = plats, onValueChange = {viewModel.onnewplatsresa(it)})
         Button(onClick = {viewModel.addresa()}) { Text(text = "Add destination") }
     }
 }
