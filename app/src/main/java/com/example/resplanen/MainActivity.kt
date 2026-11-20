@@ -64,10 +64,11 @@ fun Travelcards(){
     Card() { }
 }
 @Composable
-fun Inputelement(viewmodel: ResplanenViewmodel=viewModel() ){
+fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
+    val item=viewModel.uistate.aktivitet
     Column() {
         Text(text = "Input a travel destination")
-        TextField(value = "", onValueChange = {viewmodel.onnewresa()}, enabled = false)
-        Button(onClick = {}) { Text(text = "Add destination") }
+        TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)}, enabled = false)
+        Button(onClick = {viewModel.addresa()}) { Text(text = "Add destination") }
     }
 }

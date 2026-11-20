@@ -1,7 +1,6 @@
 package com.example.resplanen
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,25 +14,30 @@ val reslist=listOf<Resplanen>(
 
 )
 data class Resplanenuistate(
-    val Objektresa: Resplanen,
-    val mutreslist: List<Resplanen>
+    val aktivitet: String="",
+    val plats:String="",
+    val mutreslist: List<Resplanen> =reslist
 )
 class ResplanenViewmodel : ViewModel() {
-    private var _uistate by mutableStateOf(Resplanenuistate(Resplanen(id=0),reslist))
+     var uistate by mutableStateOf(Resplanenuistate())
         private set
     private var count=0
     fun addresa(){
-        val nyresa=Resplanen(_uistate.Objektresa.Aktivitet,
-            _uistate.Objektresa.plats,
-            count,
-            _uistate.Objektresa.gjort)
+        val nyresa=Resplanen(uistate.aktivitet,
+            uistate.plats,
+            count,)
         count+=1
-        _uistate = _uistate.copy(
-            Objektresa = Resplanen(Aktivitet="",plats= "",id=0,),
-            mutreslist = _uistate.mutreslist + nyresa
+        uistate = uistate.copy(
+            aktivitet="",
+            plats= "",
+            mutreslist = uistate.mutreslist + nyresa
         )
     }
-    fun onnewresa(aktivitet: String,plats: String,gjort: Boolean){
-        _uistate=_uistate.copy(Objektresa=Resplanen(aktivitet,plats,count,gjort))
+    //,plats: String,gjort: Boolean
+    fun onnewaktivitetresa(aktivitet: String){
+        uistate=uistate.copy(aktivitet=aktivitet)
+    }
+    fun onnewplatsresa(plats: String){
+        uistate=uistate.copy(plats=plats)
     }
 }
