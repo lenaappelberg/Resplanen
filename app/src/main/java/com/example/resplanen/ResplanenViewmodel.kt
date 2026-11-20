@@ -40,4 +40,10 @@ class ResplanenViewmodel : ViewModel() {
     fun onnewplatsresa(plats: String){
         uistate=uistate.copy(plats=plats)
     }
+    fun updateraresa(){
+
+    }
+    fun tabortresa(){
+
+    }
 }

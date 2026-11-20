@@ -79,3 +79,15 @@ fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
         Button(onClick = {viewModel.addresa()}) { Text(text = "Add destination") }
     }
 }
+@Composable
+fun Markasread(){
+    Button(onClick = {}) { }
+}
+@Composable
+fun Delete(){
+    Button(onClick = {}) { }
+}
+@Composable
+fun Statisticrow(){
+    Text(text = "")
+}
