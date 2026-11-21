@@ -94,3 +94,7 @@ fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
 fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
     Text(text ="${viewmodel.uistate.mutreslist.filter { it.gjort==true }.size} / ${viewmodel.uistate.mutreslist.size} done")
 }
+@Composable
+fun editbutton(viewmodel: ResplanenViewmodel=viewModel()){
+    Button(onClick ={} ) { }
+}
