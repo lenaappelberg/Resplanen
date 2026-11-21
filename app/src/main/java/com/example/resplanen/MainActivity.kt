@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
                 { innerPadding ->
                     TopAppBar({ Title("hello") })
                     Column(modifier = Modifier.padding(innerPadding)) {
+                        Statisticrow()
                         Listofcards(
 
                         )
@@ -90,6 +91,6 @@ fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
     Button(onClick = {viewmodel.tabortresa(id)}) {Text(text = "Delete Holiday") }
 }
 @Composable
-fun Statisticrow(){
-    Text(text = "")
+fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
+    Text(text ="${viewmodel.uistate.mutreslist.filter { it.gjort==true }.size} / ${viewmodel.uistate.mutreslist.size} done")
 }
