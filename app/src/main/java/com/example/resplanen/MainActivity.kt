@@ -56,15 +56,17 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
     val resor=viewmodel.uistate.mutreslist
     LazyColumn() {
         items(resor,key={it.id}){res->
-           Travelcards(res.Aktivitet,res.plats)
+           Travelcards(res.Aktivitet,res.plats,res.id)
         }
     }
 }
 @Composable
-fun Travelcards(aktivitet: String,plats:String){
+fun Travelcards(aktivitet: String,plats:String,id:Int){
     Card() {
         Text(text = aktivitet)
         Text(text = plats)
+        Markasread(id=id)
+        Delete(id=id)
     }
 }
 @Composable
@@ -80,12 +82,12 @@ fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
     }
 }
 @Composable
-fun Markasread(){
-    Button(onClick = {}) { }
+fun Markasread(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
+    Button(onClick = {viewmodel.updateraresa(id)}) {Text(text = if (viewmodel.uistate.mutreslist[id].gjort==true) "Unmark Holiday" else "Mark Holiday as done") }
 }
 @Composable
-fun Delete(){
-    Button(onClick = {}) { }
+fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
+    Button(onClick = {viewmodel.tabortresa(id)}) {Text(text = "Delete Holiday") }
 }
 @Composable
 fun Statisticrow(){

@@ -40,10 +40,15 @@ class ResplanenViewmodel : ViewModel() {
     fun onnewplatsresa(plats: String){
         uistate=uistate.copy(plats=plats)
     }
-    fun updateraresa(){
-
+    fun updateraresa(id:Int){
+        uistate=uistate.copy(
+            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(gjort = !it.gjort) else it }
+        )
     }
-    fun tabortresa(){
+    fun tabortresa(id: Int) {
+        uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
+    }
+    fun editresa(id:Int){
 
     }
 }
