@@ -48,7 +48,14 @@ class ResplanenViewmodel : ViewModel() {
     fun tabortresa(id: Int) {
         uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
     }
-    fun editresa(id:Int){
-
+    fun editaktivitetresa(id:Int,aktivitet: String){
+        uistate=uistate.copy(
+            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = aktivitet) else it }
+        )
+    }
+    fun editplatsresa(id:Int,plats: String){
+        uistate=uistate.copy(
+            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = plats) else it }
+        )
     }
 }
