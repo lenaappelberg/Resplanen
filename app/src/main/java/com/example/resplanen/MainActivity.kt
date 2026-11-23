@@ -1,9 +1,12 @@
 package com.example.resplanen
 
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -65,6 +68,7 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
 fun Travelcards(aktivitet: String,plats:String,id:Int){
     Card() {
         Text(text = aktivitet)
+        Addaktivitet(id)
         Text(text = plats)
         Markasread(id=id)
         Delete(id=id)
@@ -96,5 +100,18 @@ fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
 }
 @Composable
 fun editbutton(viewmodel: ResplanenViewmodel=viewModel()){
-    Button(onClick ={} ) { }
+    val plats=viewmodel.uistate.plats
+    Button(onClick ={ } ) { }
+}
+@Composable
+fun showtextfield(viewmodel: ResplanenViewmodel=viewModel(), visibility: Visibility){
+    val plats=viewmodel.uistate.plats
+    TextField(modifier = Modifier, value = plats, onValueChange = {viewmodel.onnewplatsresa(it)})
+}
+@Composable
+fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
+    val aktivitet=viewmodel.uistate.aktivitet
+    Text(text = "Edit an activity")
+    TextField(value = aktivitet, onValueChange = {viewmodel.onnewaktivitetresa(it)})
+    Button(onClick = {viewmodel.editaktivitetresa(id,viewmodel.uistate.aktivitet)}) {Text(text = "edit activity") }
 }
