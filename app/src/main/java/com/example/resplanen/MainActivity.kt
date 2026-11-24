@@ -61,23 +61,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
     val state=viewmodel.uistate
-    val filtered = state.mutreslist.filter {
-        when (state.filter) {
-            "Ogjort" -> !it.gjort
-            "Gjort" -> it.gjort
-            else -> true
-        }
-    }
-    val shown = if (state.sortByTitle) {
-        filtered.sortedBy { it.Aktivitet.lowercase() }
-    } else {
-        filtered
-    }
+
     Row() {Text(text)
         //Ångra knapp
-
+        //priorities filter
+        Row() {
+            priorities.forEach { filter ->
+                FilterChip(
+                    selected = state.priority == filter,
+                    onClick = { viewmodel.onnewpriority(filter) },
+                    label = { Text(filter) },
+                )
+            }
+        }
         //Searchbar
-        FilterChip(selected =state.sortByTitle, onClick = {viewmodel.toggleSort()}, label = {Text("A-Z")}) }
+//        FilterChip(selected =state.sortByTitle,
+//            onClick = {viewmodel.toggleSort()},
+//            label = {Text("Low-high")})
+                }
 
 }
 @Composable

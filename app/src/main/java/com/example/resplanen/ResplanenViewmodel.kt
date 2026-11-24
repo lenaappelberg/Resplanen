@@ -59,16 +59,14 @@ class ResplanenViewmodel : ViewModel() {
         lastRemovedIndex = index
         uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
     }
-
+    fun starteditresa(aktivitet: String){
+        uistate=uistate.copy(
+            aktivitet = aktivitet
+        )
+    }
     fun editaktivitetresa(id: Int, aktivitet: String) {
         uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = aktivitet) else it }
-        )
-    }
-
-    fun editplatsresa(id: Int, plats: String) {
-        uistate = uistate.copy(
-            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = plats) else it }
         )
     }
     fun onFilterChange(filter: String) {
@@ -78,17 +76,23 @@ class ResplanenViewmodel : ViewModel() {
     fun toggleSort() {
         uistate = uistate.copy(sortByTitle = !uistate.sortByTitle)
     }
-
-}
-    //new list?
+    val filtered = uistate.mutreslist.filter {
+        when (uistate.priority) {
+            "Low" -> it.priority=="low"
+            "Medium" -> it.priority=="medium"
+            "High"-> it.priority =="High"
+            else -> true
+        }
+    }
+    val shown = if (uistate.sortByTitle) {
+        filtered.sortedBy { it.Aktivitet.lowercase() }
+    } else {
+        filtered
+    }
 //    fun sokaresa(Aktivitet: String){
 //        uistate=uistate.copy(
 //            mutreslist = uistate.mutreslist.map { if (it.Aktivitet == Aktivitet) return it else it }
 //        )
-//  }
-//    fun startedit(){
-//        uistate=uistate.copy(
-//            aktivitet =
-//        )
 //    }
-//
+}
+    //new list?
