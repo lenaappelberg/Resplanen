@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -58,9 +59,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Title(text:String){
-    Text(text)
-    //Ångra knapp
+fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
+    val state=viewmodel.uistate
+    val filtered = state.mutreslist.filter {
+        when (state.filter) {
+            "Ogjort" -> !it.gjort
+            "Gjort" -> it.gjort
+            else -> true
+        }
+    }
+    val shown = if (state.sortByTitle) {
+        filtered.sortedBy { it.Aktivitet.lowercase() }
+    } else {
+        filtered
+    }
+    Row() {Text(text)
+        //Ångra knapp
+
+        //Searchbar
+        FilterChip(selected =state.sortByTitle, onClick = {viewmodel.toggleSort()}, label = {Text("A-Z")}) }
+
 }
 @Composable
 fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
@@ -76,7 +94,7 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
             Text(text = "Oresta Destinationer")
             LazyColumn() {
                 items(resor,key={it.id}){res->
-                    Travelcards(res.Aktivitet,res.plats,res.id)
+                    Travelcards(Resplanen(res.Aktivitet,res.priority,res.id))
                 }
             }
         }
@@ -85,33 +103,37 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
 
 }
 @Composable
-fun Travelcards(aktivitet: String,plats:String,id:Int){
+fun Travelcards(Resplanen: Resplanen){
     Card() {
-        Text(text = aktivitet)
-        Addaktivitet(id)
-        Text(text = plats)
-        Markasread(id=id)
-        Delete(id=id)
+        Text(text = Resplanen.Aktivitet)
+        Addaktivitet(Resplanen.id)
+        Markasread(id= Resplanen.id)
+        Text(text = Resplanen.priority)
+        Delete(id= Resplanen.id)
     }
 }
 @Composable
 fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
+    //global state management applies everywhere which means that edits also appear here
     val item=viewModel.uistate.aktivitet
-    val plats=viewModel.uistate.plats
-    var checked by remember { mutableStateOf(true) }
+    //var checked by remember { mutableStateOf(true,false,false) }
+    var checked=viewModel.uistate.priority
     Column() {
         Text(text = "Input an activitet")
         TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)})
-        Text(text = "Input a destination")
-        TextField(value = plats, onValueChange = {viewModel.onnewplatsresa(it)})
         Text(text = "Priority")
         Row() {
-            Column() {
-                Text(text = "Low priority")
-                Checkbox(checked=checked, onCheckedChange = {checked=it})
+            priorities.forEach {
+                priority->
+                FilterChip(
+                    selected = checked==priority,
+                    onClick = {viewModel.onnewpriority(priority)},
+                    label = {Text(priority)}
+                )
             }
         }
-        Button(onClick = {viewModel.addresa()}) { Text(text = "Add destination") }
+
+        Button(onClick = {viewModel.addresa()}, enabled = if (item.isNotEmpty())true else false) { Text(text = "Add destination") }
     }
 }
 @Composable
@@ -127,19 +149,14 @@ fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
     Text(text ="${viewmodel.uistate.mutreslist.filter { it.gjort==true }.size} / ${viewmodel.uistate.mutreslist.size} done")
 }
 @Composable
-fun editbutton(viewmodel: ResplanenViewmodel=viewModel()){
-    val plats=viewmodel.uistate.plats
-    Button(onClick ={ } ) { }
-}
-@Composable
-fun showtextfield(viewmodel: ResplanenViewmodel=viewModel(), visibility: Visibility){
-    val plats=viewmodel.uistate.plats
-    TextField(modifier = Modifier, value = plats, onValueChange = {viewmodel.onnewplatsresa(it)})
-}
-@Composable
 fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
     val aktivitet=viewmodel.uistate.aktivitet
     Text(text = "Edit an activity")
     TextField(value = aktivitet, onValueChange = {viewmodel.onnewaktivitetresa(it)})
     Button(onClick = {viewmodel.editaktivitetresa(id,viewmodel.uistate.aktivitet)}) {Text(text = "edit activity") }
+}
+@Composable
+fun searchbar(){
+    TextField(value="", onValueChange = {})
+    Button(onClick = {}) { }
 }

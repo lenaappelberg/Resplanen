@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 data class Resplanen  (
     val Aktivitet:String="",
-    val plats:String="",
+    val priority:String="",
     val id:Int,
     val gjort: Boolean=false
 )
@@ -15,55 +15,80 @@ val reslist=listOf<Resplanen>(
 )
 data class Resplanenuistate(
     val aktivitet: String="",
-    val plats:String="",
+    val priority:String=priorities[0],
+    val sortByTitle: Boolean = false,
+    val filter:String="ALLA",
     val mutreslist: List<Resplanen> =reslist
 )
+val priorities=listOf<String>("Low","Medium","High")
 class ResplanenViewmodel : ViewModel() {
-     var uistate by mutableStateOf(Resplanenuistate())
+    var uistate by mutableStateOf(Resplanenuistate())
         private set
-    private var count=0
-    fun addresa(){
+    private var count = 0
+    private var lastRemoved: Resplanen? = null
+    private var lastRemovedIndex = 0
+    fun addresa() {
         val aktivitet = uistate.aktivitet.trim()
         if (aktivitet.isEmpty()) return
-        val nyresa=Resplanen(uistate.aktivitet,
-            uistate.plats,
-            count,)
-        count+=1
+        val nyresa = Resplanen(
+            uistate.aktivitet,uistate.priority,
+            count,
+        )
+        count += 1
         uistate = uistate.copy(
-            aktivitet="",
-            plats= "",
+            aktivitet = "",
             mutreslist = uistate.mutreslist + nyresa
         )
     }
     //,plats: String,gjort: Boolean
-    fun onnewaktivitetresa(aktivitet: String){
-        uistate=uistate.copy(aktivitet=aktivitet)
+    fun onnewaktivitetresa(aktivitet: String) {
+        uistate = uistate.copy(aktivitet = aktivitet)
     }
-    fun onnewplatsresa(plats: String){
-        uistate=uistate.copy(plats=plats)
+    fun onnewpriority(priority: String){
+        uistate=uistate.copy(priority = priority)
     }
-    fun updateraresa(id:Int){
-        uistate=uistate.copy(
+    fun updateraresa(id: Int) {
+        uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(gjort = !it.gjort) else it }
         )
     }
     fun tabortresa(id: Int) {
+        val index = uistate.mutreslist.indexOfFirst { it.id == id }
+        if (index == -1) return
+        lastRemoved = uistate.mutreslist[index]
+        lastRemovedIndex = index
         uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
     }
-    fun editaktivitetresa(id:Int,aktivitet: String){
-        uistate=uistate.copy(
+
+    fun editaktivitetresa(id: Int, aktivitet: String) {
+        uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = aktivitet) else it }
         )
     }
-    fun editplatsresa(id:Int,plats: String){
-        uistate=uistate.copy(
+
+    fun editplatsresa(id: Int, plats: String) {
+        uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = plats) else it }
         )
     }
+    fun onFilterChange(filter: String) {
+        uistate = uistate.copy(filter = filter)
+    }
+
+    fun toggleSort() {
+        uistate = uistate.copy(sortByTitle = !uistate.sortByTitle)
+    }
+
+}
     //new list?
 //    fun sokaresa(Aktivitet: String){
 //        uistate=uistate.copy(
 //            mutreslist = uistate.mutreslist.map { if (it.Aktivitet == Aktivitet) return it else it }
 //        )
+//  }
+//    fun startedit(){
+//        uistate=uistate.copy(
+//            aktivitet =
+//        )
 //    }
-}
+//
