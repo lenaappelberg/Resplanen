@@ -8,18 +8,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
@@ -54,15 +60,29 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Title(text:String){
     Text(text)
+    //Ångra knapp
 }
 @Composable
 fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
     val resor=viewmodel.uistate.mutreslist
-    LazyColumn() {
-        items(resor,key={it.id}){res->
-           Travelcards(res.Aktivitet,res.plats,res.id)
+    Row() {
+        Column() {
+            Text(text = "Resta destinationer")
+            LazyColumn() {
+
+            }
         }
+        Column() {
+            Text(text = "Oresta Destinationer")
+            LazyColumn() {
+                items(resor,key={it.id}){res->
+                    Travelcards(res.Aktivitet,res.plats,res.id)
+                }
+            }
+        }
+
     }
+
 }
 @Composable
 fun Travelcards(aktivitet: String,plats:String,id:Int){
@@ -78,11 +98,19 @@ fun Travelcards(aktivitet: String,plats:String,id:Int){
 fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
     val item=viewModel.uistate.aktivitet
     val plats=viewModel.uistate.plats
+    var checked by remember { mutableStateOf(true) }
     Column() {
         Text(text = "Input an activitet")
         TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)})
         Text(text = "Input a destination")
         TextField(value = plats, onValueChange = {viewModel.onnewplatsresa(it)})
+        Text(text = "Priority")
+        Row() {
+            Column() {
+                Text(text = "Low priority")
+                Checkbox(checked=checked, onCheckedChange = {checked=it})
+            }
+        }
         Button(onClick = {viewModel.addresa()}) { Text(text = "Add destination") }
     }
 }

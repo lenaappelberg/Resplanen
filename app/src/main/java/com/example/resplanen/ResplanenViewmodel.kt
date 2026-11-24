@@ -23,6 +23,8 @@ class ResplanenViewmodel : ViewModel() {
         private set
     private var count=0
     fun addresa(){
+        val aktivitet = uistate.aktivitet.trim()
+        if (aktivitet.isEmpty()) return
         val nyresa=Resplanen(uistate.aktivitet,
             uistate.plats,
             count,)
@@ -58,4 +60,10 @@ class ResplanenViewmodel : ViewModel() {
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = plats) else it }
         )
     }
+    //new list?
+//    fun sokaresa(Aktivitet: String){
+//        uistate=uistate.copy(
+//            mutreslist = uistate.mutreslist.map { if (it.Aktivitet == Aktivitet) return it else it }
+//        )
+//    }
 }
