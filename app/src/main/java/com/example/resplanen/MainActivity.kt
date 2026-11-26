@@ -17,8 +17,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -26,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,10 +45,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ResplanenTheme {
-
-                Scaffold(modifier = Modifier.fillMaxSize(), topBar = { TopAppBar({ Title("hello") }) })
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
+                Scaffold(modifier = Modifier.fillMaxSize(),snackbarHost = {
+                    SnackbarHost(snackbarHostState)
+                },
+                    topBar = { TopAppBar({ Title("hello") }) },floatingActionButton = { ExtendedFloatingActionButton(onClick = {}, content = {
+                        Text(text = "undo")
+                    }) })
                 { innerPadding ->
+
                     TopAppBar({ Title("hello") })
+
+
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Statisticrow()
                         Listofcards(
@@ -75,10 +88,11 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
             }
         }
         //Searchbar
-//        FilterChip(selected =state.sortByTitle,
-//            onClick = {viewmodel.toggleSort()},
-//            label = {Text("Low-high")})
+        FilterChip(selected =state.sortByTitle,
+            onClick = {viewmodel.toggleSort()},
+            label = {Text("Low-high")})
                 }
+    //undoremove button
 
 }
 @Composable
@@ -160,4 +174,7 @@ fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
 fun searchbar(){
     TextField(value="", onValueChange = {})
     Button(onClick = {}) { }
+}
+@Composable fun undoremovebutton(){
+Button(onClick = {}) {Text(text = "undoremove") }
 }

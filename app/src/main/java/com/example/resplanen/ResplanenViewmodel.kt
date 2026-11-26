@@ -3,6 +3,8 @@ package com.example.resplanen
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 data class Resplanen  (
     val Aktivitet:String="",
@@ -89,6 +91,15 @@ class ResplanenViewmodel : ViewModel() {
     } else {
         filtered
     }
+    fun undoRemove() {
+        val res = lastRemoved ?: return
+        val resor = uistate.mutreslist
+        uistate = uistate.copy(
+            mutreslist = resor.take(lastRemovedIndex) + res + resor.drop(lastRemovedIndex)
+        )
+        lastRemoved = null
+    }
+
 //    fun sokaresa(Aktivitet: String){
 //        uistate=uistate.copy(
 //            mutreslist = uistate.mutreslist.map { if (it.Aktivitet == Aktivitet) return it else it }
