@@ -15,6 +15,7 @@ val reslist=listOf<Resplanen>(
 )
 data class Resplanenuistate(
     val aktivitet: String="",
+    val newaktivitet:String="",
     val priority:String=priorities[0],
     val sortByTitle: Boolean = false,
     val filter:String="ALLA",
@@ -59,14 +60,14 @@ class ResplanenViewmodel : ViewModel() {
         lastRemovedIndex = index
         uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
     }
-    fun starteditresa(aktivitet: String){
+    fun starteditresa(newaktivitet: String){
         uistate=uistate.copy(
-            aktivitet = aktivitet
+            newaktivitet = newaktivitet
         )
     }
-    fun editaktivitetresa(id: Int, aktivitet: String) {
+    fun editaktivitetresa(id: Int, newaktivitet: String) {
         uistate = uistate.copy(
-            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = aktivitet) else it }
+            mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = newaktivitet) else it }
         )
     }
     fun onFilterChange(filter: String) {

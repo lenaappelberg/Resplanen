@@ -69,7 +69,7 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
             priorities.forEach { filter ->
                 FilterChip(
                     selected = state.priority == filter,
-                    onClick = { viewmodel.onnewpriority(filter) },
+                    onClick = { viewmodel.onFilterChange(filter) },
                     label = { Text(filter) },
                 )
             }
@@ -151,10 +151,10 @@ fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
 }
 @Composable
 fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
-    val aktivitet=viewmodel.uistate.aktivitet
+    val newaktivitet=viewmodel.uistate.newaktivitet
     Text(text = "Edit an activity")
-    TextField(value = aktivitet, onValueChange = {viewmodel.onnewaktivitetresa(it)})
-    Button(onClick = {viewmodel.editaktivitetresa(id,viewmodel.uistate.aktivitet)}) {Text(text = "edit activity") }
+    TextField(value = newaktivitet, onValueChange = {viewmodel.starteditresa(it)})
+    Button(onClick = {viewmodel.editaktivitetresa(id,newaktivitet)}) {Text(text = "edit activity") }
 }
 @Composable
 fun searchbar(){
