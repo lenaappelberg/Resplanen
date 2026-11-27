@@ -50,15 +50,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             ResplanenTheme {
                 val snackbarHostState = remember { SnackbarHostState() }
-                val scope = rememberCoroutineScope()
-                Scaffold(modifier = Modifier.fillMaxSize(),snackbarHost = {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(), snackbarHost = {
                     SnackbarHost(snackbarHostState)
                 },
-                    topBar = { TopAppBar({ Title("hello") }) },floatingActionButton = { undoremovebutton()
+                    topBar = { TopAppBar({ Title() }) }, floatingActionButton = {
+                        undoremovebutton()
                     })
                 { innerPadding ->
 
-                    TopAppBar({ Title("hello") })
+                    TopAppBar({ Title() })
 
 
                     Column(modifier = Modifier.padding(innerPadding)) {
@@ -75,10 +76,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
-    val state=viewmodel.uistate
+fun Title( viewmodel: ResplanenViewmodel = viewModel()) {
+    val state = viewmodel.uistate
     Row() {
-        Text(text)
         Row() {
             filters.forEach { filter ->
                 FilterChip(
@@ -92,13 +92,14 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
         FilterChip(
             selected = state.sortByaktivitet,
             onClick = { viewmodel.toggleSort() },
-            label = { Text("A-Ö") })
+            label = { Text("A-Z") })
     }
 
 }
+
 @Composable
-fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
-    val resor=viewmodel.uistate.mutreslist
+fun Listofcards(viewmodel: ResplanenViewmodel = viewModel()) {
+    val resor = viewmodel.uistate.mutreslist
     val filtered = viewmodel.uistate.mutreslist.filter {
         when (viewmodel.uistate.filter) {
             "Untravelled" -> !it.gjort
@@ -113,15 +114,7 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
     }
     Row() {
         Column() {
-            Text(text = "Resta destinationer")
-            LazyColumn() {
-                items(resor, key = { it.id }) { res ->
-                    Travelcards(Resplanen(res.Aktivitet, res.priority, res.id))
-                }
-            }
-        }
-        Column() {
-            Text(text = "Oresta Destinationer")
+            Text(text = "List of Travel destinations")
             LazyColumn() {
                 items(shown, key = { it.id }) { res ->
                     Travelcards(Resplanen(res.Aktivitet, res.priority, res.id))
@@ -132,78 +125,97 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
     }
 
 }
+
 @Composable
-fun Travelcards(Resplanen: Resplanen){
+fun Travelcards(Resplanen: Resplanen) {
     Card() {
         Text(text = Resplanen.Aktivitet)
         Addaktivitet(Resplanen.id)
-        Markasread(id= Resplanen.id)
+        Markasread(id = Resplanen.id)
         Text(text = Resplanen.priority)
-        Delete(id= Resplanen.id)
+        Delete(id = Resplanen.id)
     }
 }
+
 @Composable
-fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
-    val item=viewModel.uistate.aktivitet
-    var checked=viewModel.uistate.priority
+fun Inputelement(viewModel: ResplanenViewmodel = viewModel()) {
+    val item = viewModel.uistate.aktivitet
+    var checked = viewModel.uistate.priority
     Column() {
         Text(text = "Input an activitet")
-        TextField(value = item, onValueChange = {viewModel.onnewaktivitetresa(it)})
+        TextField(value = item, onValueChange = { viewModel.onnewaktivitetresa(it) })
         Text(text = "Priority")
         Row() {
-            priorities.forEach {
-                priority->
+            priorities.forEach { priority ->
                 FilterChip(
-                    selected = checked==priority,
-                    onClick = {viewModel.onnewpriority(priority)},
-                    label = {Text(priority)}
+                    selected = checked == priority,
+                    onClick = { viewModel.onnewpriority(priority) },
+                    label = { Text(priority) }
                 )
             }
         }
 
-        Button(onClick = {viewModel.addresa()}, enabled = if (item.isNotEmpty())true else false) { Text(text = "Add destination") }
+        Button(
+            onClick = { viewModel.addresa() },
+            enabled = if (item.isNotEmpty()) true else false
+        ) { Text(text = "Add destination") }
     }
 }
+
 @Composable
-fun Markasread(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
-    Button(onClick = {viewmodel.updateraresa(id)}) {Text(text = if (viewmodel.uistate.mutreslist[id].gjort==true) "Unmark Holiday" else "Mark Holiday as done") }
+fun Markasread(viewmodel: ResplanenViewmodel = viewModel(), id: Int) {
+    Button(onClick = { viewmodel.updateraresa(id) }) { Text(text = if (viewmodel.uistate.mutreslist[id].gjort == true) "Unmark Holiday" else "Mark Holiday as done") }
 }
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
+fun Delete(viewmodel: ResplanenViewmodel = viewModel(), id: Int) {
     val index = viewmodel.uistate.mutreslist.indexOfFirst { it.id == id }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    Button(onClick = {viewmodel.tabortresa(id)}) {Text(text = "Delete Holiday") }
-        scope.launch {
-            val result = snackbarHostState.showSnackbar(
-                message = "${viewmodel.uistate.mutreslist[index].Aktivitet} togs bort",
-                actionLabel = "Ångra",
-                duration = SnackbarDuration.Short,
-            )
-            if (result == SnackbarResult.ActionPerformed) {
-                viewmodel.undoRemove()
-            }
+    Button(onClick = { viewmodel.tabortresa(id) }) { Text(text = "Delete Holiday") }
+    scope.launch {
+        val result = snackbarHostState.showSnackbar(
+            message = "${viewmodel.uistate.mutreslist[index].Aktivitet} togs bort",
+            actionLabel = "Ångra",
+            duration = SnackbarDuration.Short,
+        )
+        if (result == SnackbarResult.ActionPerformed) {
+            viewmodel.undoRemove()
         }
+    }
 }
+
 @Composable
-fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
-    Text(text = if (viewmodel.uistate.mutreslist.size == 0) "Add destinations with Add destination button and a destination name"
-    else "${viewmodel.uistate.mutreslist.filter { it.gjort == true }.size} / ${viewmodel.uistate.mutreslist.size} done")
+fun Statisticrow(viewmodel: ResplanenViewmodel = viewModel()) {
+    Text(
+        text = if (viewmodel.uistate.mutreslist.size == 0) "Add destinations with Add destination button and a destination name"
+    else "${viewmodel.uistate.mutreslist.filter { it.gjort == true }.size} / ${viewmodel.uistate.mutreslist.size} done"
+    )
 }
+
 @Composable
-fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
-    val newaktivitet=viewmodel.uistate.newaktivitet
+fun Addaktivitet(id: Int, viewmodel: ResplanenViewmodel = viewModel()) {
+    val newaktivitet = viewmodel.uistate.newaktivitet
     Text(text = "Edit an activity")
-    TextField(value = newaktivitet, onValueChange = {viewmodel.starteditresa(it)})
-    Button(onClick = {viewmodel.editaktivitetresa(id,newaktivitet)}) {Text(text = "edit activity") }
+    TextField(value = newaktivitet, onValueChange = { viewmodel.starteditresa(it) })
+    Button(onClick = {
+        viewmodel.editaktivitetresa(
+            id,
+            newaktivitet
+        )
+    }) { Text(text = "edit activity") }
 }
+
 @Composable
-fun searchbar(){
-    TextField(value="", onValueChange = {})
+fun searchbar() {
+    TextField(value = "", onValueChange = {})
     Button(onClick = {}) { }
 }
-@Composable fun undoremovebutton(viewmodel: ResplanenViewmodel=viewModel()){
-    ExtendedFloatingActionButton(onClick = {viewmodel.undoRemove()}, content = {
-        Text(text = "undo")})
+
+@Composable
+fun undoremovebutton(viewmodel: ResplanenViewmodel = viewModel()) {
+    ExtendedFloatingActionButton(onClick = { viewmodel.undoRemove() }, content = {
+        Text(text = "undo")
+    })
 }

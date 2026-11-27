@@ -6,25 +6,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-data class Resplanen  (
-    val Aktivitet:String="",
-    val priority:String="",
-    val id:Int,
-    val gjort: Boolean=false
+
+data class Resplanen(
+    val Aktivitet: String = "",
+    val priority: String = "",
+    val id: Int,
+    val gjort: Boolean = false
 )
-val reslist=listOf<Resplanen>(
+
+val reslist = listOf<Resplanen>(
 
 )
+
 data class Resplanenuistate(
-    val aktivitet: String="",
-    val newaktivitet:String="",
-    val priority:String=priorities[0],
+    val aktivitet: String = "",
+    val newaktivitet: String = "",
+    val priority: String = priorities[0],
     val sortByaktivitet: Boolean = false,
-    val filter:String="All",
-    val mutreslist: List<Resplanen> =reslist
+    val filter: String = "All",
+    val mutreslist: List<Resplanen> = reslist
 )
-val priorities=listOf<String>("Low","Medium","High")
-val filters=listOf<String>("All", "Untravelled", "Travelled")
+
+val priorities = listOf<String>("Low", "Medium", "High")
+val filters = listOf<String>("All", "Untravelled", "Travelled")
+
 class ResplanenViewmodel : ViewModel() {
     var uistate by mutableStateOf(Resplanenuistate())
         private set
@@ -44,6 +49,7 @@ class ResplanenViewmodel : ViewModel() {
             mutreslist = uistate.mutreslist + nyresa
         )
     }
+
     fun onnewaktivitetresa(aktivitet: String) {
         uistate = uistate.copy(aktivitet = aktivitet)
     }
@@ -84,19 +90,6 @@ class ResplanenViewmodel : ViewModel() {
 
     fun toggleSort() {
         uistate = uistate.copy(sortByaktivitet = !uistate.sortByaktivitet)
-    }
-
-    val filtered = uistate.mutreslist.filter {
-        when (uistate.filter) {
-            "Untravelled" -> !it.gjort
-            "Travelled" -> it.gjort
-            else -> true
-        }
-    }
-    val shown = if (uistate.sortByaktivitet) {
-        filtered.sortedBy { it.Aktivitet.lowercase() }
-    } else {
-        filtered
     }
 
     fun undoRemove() {
