@@ -99,7 +99,6 @@ fun Title( viewmodel: ResplanenViewmodel = viewModel()) {
 
 @Composable
 fun Listofcards(viewmodel: ResplanenViewmodel = viewModel()) {
-    val resor = viewmodel.uistate.mutreslist
     val filtered = viewmodel.uistate.mutreslist.filter {
         when (viewmodel.uistate.filter) {
             "Untravelled" -> !it.gjort
@@ -206,13 +205,6 @@ fun Addaktivitet(id: Int, viewmodel: ResplanenViewmodel = viewModel()) {
         )
     }) { Text(text = "edit activity") }
 }
-
-@Composable
-fun searchbar() {
-    TextField(value = "", onValueChange = {})
-    Button(onClick = {}) { }
-}
-
 @Composable
 fun undoremovebutton(viewmodel: ResplanenViewmodel = viewModel()) {
     ExtendedFloatingActionButton(onClick = { viewmodel.undoRemove() }, content = {
