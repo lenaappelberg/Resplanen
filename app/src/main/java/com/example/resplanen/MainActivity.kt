@@ -1,5 +1,6 @@
 package com.example.resplanen
 
+import android.annotation.SuppressLint
 import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
@@ -20,8 +21,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -36,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import com.example.resplanen.ui.theme.ResplanenTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -50,9 +54,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),snackbarHost = {
                     SnackbarHost(snackbarHostState)
                 },
-                    topBar = { TopAppBar({ Title("hello") }) },floatingActionButton = { ExtendedFloatingActionButton(onClick = {}, content = {
-                        Text(text = "undo")
-                    }) })
+                    topBar = { TopAppBar({ Title("hello") }) },floatingActionButton = { undoremovebutton()
+                    })
                 { innerPadding ->
 
                     TopAppBar({ Title("hello") })
@@ -79,9 +82,9 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
         //Ångra knapp
         //priorities filter
         Row() {
-            priorities.forEach { filter ->
+            filters.forEach { filter ->
                 FilterChip(
-                    selected = state.priority == filter,
+                    selected = state.filter==filter,
                     onClick = { viewmodel.onFilterChange(filter) },
                     label = { Text(filter) },
                 )
@@ -92,7 +95,6 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
             onClick = {viewmodel.toggleSort()},
             label = {Text("Low-high")})
                 }
-    //undoremove button
 
 }
 @Composable
@@ -129,9 +131,7 @@ fun Travelcards(Resplanen: Resplanen){
 }
 @Composable
 fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
-    //global state management applies everywhere which means that edits also appear here
     val item=viewModel.uistate.aktivitet
-    //var checked by remember { mutableStateOf(true,false,false) }
     var checked=viewModel.uistate.priority
     Column() {
         Text(text = "Input an activitet")
@@ -155,9 +155,23 @@ fun Inputelement(viewModel: ResplanenViewmodel = viewModel() ){
 fun Markasread(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
     Button(onClick = {viewmodel.updateraresa(id)}) {Text(text = if (viewmodel.uistate.mutreslist[id].gjort==true) "Unmark Holiday" else "Mark Holiday as done") }
 }
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
+    val index = viewmodel.uistate.mutreslist.indexOfFirst { it.id == id }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     Button(onClick = {viewmodel.tabortresa(id)}) {Text(text = "Delete Holiday") }
+        scope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = "${viewmodel.uistate.mutreslist[index].Aktivitet} togs bort",
+                actionLabel = "Ångra",
+                duration = SnackbarDuration.Short,
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewmodel.undoRemove()
+            }
+        }
 }
 @Composable
 fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
@@ -175,6 +189,7 @@ fun searchbar(){
     TextField(value="", onValueChange = {})
     Button(onClick = {}) { }
 }
-@Composable fun undoremovebutton(){
-Button(onClick = {}) {Text(text = "undoremove") }
+@Composable fun undoremovebutton(viewmodel: ResplanenViewmodel=viewModel()){
+    ExtendedFloatingActionButton(onClick = {viewmodel.undoRemove()}, content = {
+        Text(text = "undo")})
 }

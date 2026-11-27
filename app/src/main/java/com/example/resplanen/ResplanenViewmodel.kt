@@ -24,6 +24,7 @@ data class Resplanenuistate(
     val mutreslist: List<Resplanen> =reslist
 )
 val priorities=listOf<String>("Low","Medium","High")
+val filters=listOf<String>("Low","Medium","High")
 class ResplanenViewmodel : ViewModel() {
     var uistate by mutableStateOf(Resplanenuistate())
         private set
@@ -80,7 +81,7 @@ class ResplanenViewmodel : ViewModel() {
         uistate = uistate.copy(sortByTitle = !uistate.sortByTitle)
     }
     val filtered = uistate.mutreslist.filter {
-        when (uistate.priority) {
+        when (uistate.filter) {
             "Low" -> it.priority=="low"
             "Medium" -> it.priority=="medium"
             "High"-> it.priority =="High"
