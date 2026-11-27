@@ -20,11 +20,11 @@ data class Resplanenuistate(
     val newaktivitet:String="",
     val priority:String=priorities[0],
     val sortByTitle: Boolean = false,
-    val filter:String="ALLA",
+    val filter:String="All",
     val mutreslist: List<Resplanen> =reslist
 )
 val priorities=listOf<String>("Low","Medium","High")
-val filters=listOf<String>("Low","Medium","High")
+val filters=listOf<String>("All", "Untravelled", "Travelled")
 class ResplanenViewmodel : ViewModel() {
     var uistate by mutableStateOf(Resplanenuistate())
         private set
@@ -35,7 +35,7 @@ class ResplanenViewmodel : ViewModel() {
         val aktivitet = uistate.aktivitet.trim()
         if (aktivitet.isEmpty()) return
         val nyresa = Resplanen(
-            uistate.aktivitet,uistate.priority,
+            uistate.aktivitet, uistate.priority,
             count,
         )
         count += 1
@@ -44,18 +44,20 @@ class ResplanenViewmodel : ViewModel() {
             mutreslist = uistate.mutreslist + nyresa
         )
     }
-    //,plats: String,gjort: Boolean
     fun onnewaktivitetresa(aktivitet: String) {
         uistate = uistate.copy(aktivitet = aktivitet)
     }
-    fun onnewpriority(priority: String){
-        uistate=uistate.copy(priority = priority)
+
+    fun onnewpriority(priority: String) {
+        uistate = uistate.copy(priority = priority)
     }
+
     fun updateraresa(id: Int) {
         uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(gjort = !it.gjort) else it }
         )
     }
+
     fun tabortresa(id: Int) {
         val index = uistate.mutreslist.indexOfFirst { it.id == id }
         if (index == -1) return
@@ -63,16 +65,19 @@ class ResplanenViewmodel : ViewModel() {
         lastRemovedIndex = index
         uistate = uistate.copy(mutreslist = uistate.mutreslist.filter { it.id != id })
     }
-    fun starteditresa(newaktivitet: String){
-        uistate=uistate.copy(
+
+    fun starteditresa(newaktivitet: String) {
+        uistate = uistate.copy(
             newaktivitet = newaktivitet
         )
     }
+
     fun editaktivitetresa(id: Int, newaktivitet: String) {
         uistate = uistate.copy(
             mutreslist = uistate.mutreslist.map { if (it.id == id) it.copy(Aktivitet = newaktivitet) else it }
         )
     }
+
     fun onFilterChange(filter: String) {
         uistate = uistate.copy(filter = filter)
     }
@@ -80,11 +85,11 @@ class ResplanenViewmodel : ViewModel() {
     fun toggleSort() {
         uistate = uistate.copy(sortByTitle = !uistate.sortByTitle)
     }
+
     val filtered = uistate.mutreslist.filter {
         when (uistate.filter) {
-            "Low" -> it.priority=="low"
-            "Medium" -> it.priority=="medium"
-            "High"-> it.priority =="High"
+            "Untravelled" -> !it.gjort
+            "Travelled" -> it.gjort
             else -> true
         }
     }
@@ -93,6 +98,7 @@ class ResplanenViewmodel : ViewModel() {
     } else {
         filtered
     }
+
     fun undoRemove() {
         val res = lastRemoved ?: return
         val resor = uistate.mutreslist
@@ -101,11 +107,4 @@ class ResplanenViewmodel : ViewModel() {
         )
         lastRemoved = null
     }
-
-//    fun sokaresa(Aktivitet: String){
-//        uistate=uistate.copy(
-//            mutreslist = uistate.mutreslist.map { if (it.Aktivitet == Aktivitet) return it else it }
-//        )
-//    }
 }
-    //new list?

@@ -77,24 +77,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
     val state=viewmodel.uistate
-
-    Row() {Text(text)
-        //Ångra knapp
-        //priorities filter
+    val view= viewmodel
+    Row() {
+        Text(text)
         Row() {
             filters.forEach { filter ->
                 FilterChip(
-                    selected = state.filter==filter,
+                    selected = state.filter == filter,
                     onClick = { viewmodel.onFilterChange(filter) },
                     label = { Text(filter) },
                 )
             }
         }
-        //Searchbar
-        FilterChip(selected =state.sortByTitle,
-            onClick = {viewmodel.toggleSort()},
-            label = {Text("Low-high")})
-                }
+        // turn on /off filter
+        FilterChip(
+            selected = state.sortByTitle,
+            onClick = { viewmodel.toggleSort() },
+            label = { Text("A-Ö") })
+    }
 
 }
 @Composable
@@ -104,14 +104,16 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
         Column() {
             Text(text = "Resta destinationer")
             LazyColumn() {
-
+                items(resor, key = { it.id }) { res ->
+                    Travelcards(Resplanen(res.Aktivitet, res.priority, res.id))
+                }
             }
         }
         Column() {
             Text(text = "Oresta Destinationer")
             LazyColumn() {
-                items(resor,key={it.id}){res->
-                    Travelcards(Resplanen(res.Aktivitet,res.priority,res.id))
+                items(viewmodel.shown, key = { it.id }) { res ->
+                    Travelcards(Resplanen(res.Aktivitet, res.priority, res.id))
                 }
             }
         }
@@ -175,7 +177,8 @@ fun Delete(viewmodel: ResplanenViewmodel=viewModel(),id:Int){
 }
 @Composable
 fun Statisticrow(viewmodel: ResplanenViewmodel=viewModel()){
-    Text(text ="${viewmodel.uistate.mutreslist.filter { it.gjort==true }.size} / ${viewmodel.uistate.mutreslist.size} done")
+    Text(text = if (viewmodel.uistate.mutreslist.size == 0) "Add destinations with Add destination button and a destination name"
+    else "${viewmodel.uistate.mutreslist.filter { it.gjort == true }.size} / ${viewmodel.uistate.mutreslist.size} done")
 }
 @Composable
 fun Addaktivitet(id: Int,viewmodel: ResplanenViewmodel=viewModel()){
