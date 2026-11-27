@@ -77,7 +77,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
     val state=viewmodel.uistate
-    val view= viewmodel
     Row() {
         Text(text)
         Row() {
@@ -91,7 +90,7 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
         }
         // turn on /off filter
         FilterChip(
-            selected = state.sortByTitle,
+            selected = state.sortByaktivitet,
             onClick = { viewmodel.toggleSort() },
             label = { Text("A-Ö") })
     }
@@ -100,6 +99,18 @@ fun Title(text:String,viewmodel: ResplanenViewmodel=viewModel()){
 @Composable
 fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
     val resor=viewmodel.uistate.mutreslist
+    val filtered = viewmodel.uistate.mutreslist.filter {
+        when (viewmodel.uistate.filter) {
+            "Untravelled" -> !it.gjort
+            "Travelled" -> it.gjort
+            else -> true
+        }
+    }
+    val shown = if (viewmodel.uistate.sortByaktivitet) {
+        filtered.sortedBy { it.Aktivitet.lowercase() }
+    } else {
+        filtered
+    }
     Row() {
         Column() {
             Text(text = "Resta destinationer")
@@ -112,7 +123,7 @@ fun Listofcards(viewmodel: ResplanenViewmodel=viewModel() ){
         Column() {
             Text(text = "Oresta Destinationer")
             LazyColumn() {
-                items(viewmodel.shown, key = { it.id }) { res ->
+                items(shown, key = { it.id }) { res ->
                     Travelcards(Resplanen(res.Aktivitet, res.priority, res.id))
                 }
             }

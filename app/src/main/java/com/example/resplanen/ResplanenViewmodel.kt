@@ -19,7 +19,7 @@ data class Resplanenuistate(
     val aktivitet: String="",
     val newaktivitet:String="",
     val priority:String=priorities[0],
-    val sortByTitle: Boolean = false,
+    val sortByaktivitet: Boolean = false,
     val filter:String="All",
     val mutreslist: List<Resplanen> =reslist
 )
@@ -83,7 +83,7 @@ class ResplanenViewmodel : ViewModel() {
     }
 
     fun toggleSort() {
-        uistate = uistate.copy(sortByTitle = !uistate.sortByTitle)
+        uistate = uistate.copy(sortByaktivitet = !uistate.sortByaktivitet)
     }
 
     val filtered = uistate.mutreslist.filter {
@@ -93,7 +93,7 @@ class ResplanenViewmodel : ViewModel() {
             else -> true
         }
     }
-    val shown = if (uistate.sortByTitle) {
+    val shown = if (uistate.sortByaktivitet) {
         filtered.sortedBy { it.Aktivitet.lowercase() }
     } else {
         filtered
